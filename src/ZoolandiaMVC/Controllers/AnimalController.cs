@@ -3,6 +3,8 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using ZoolandiaMVC.Models;
+using ZoolandiaMVC.ViewModels;
+using System;
 
 namespace ZoolandiaMVC.Controllers
 {
@@ -16,24 +18,42 @@ namespace ZoolandiaMVC.Controllers
         }
 
         // GET: Animals
-        public IActionResult Index()
+        public IActionResult Index(string searchString)
         {
-            var AnimalInfo = 
+
+            // Create functionality for searching
+            var animals = from a in _context.Animal
+                          select a;
+
+            
+
+            // access the database and get info for the animal's name and habitat
+            var AnimalInfo =
                 (from animal in _context.Animal
-                join habitat in _context.Habitat
-                on animal.IdHabitat equals habitat.ID
-                
-                join species in _context.Species
-                on animal.IdSpecies equals species.ID
+                 join habitat in _context.Habitat
+                 on animal.IdHabitat equals habitat.ID
 
-                //basically means 'create new' based on search results
-                select new
-                {
-                    animal = animal.Name,
-                    animalHabitatName = habitat.Name,
-                    animalSpecies = species.CommonName
+                 join species in _context.Species
+                 on animal.IdSpecies equals species.ID
 
-                }).ToList();
+                 //basically means 'create new' based on search results
+                 select new AnimalDataViewModel
+                 {
+                     ID = animal.ID,
+                     animal = animal.Name,
+                     animalHabitatName = habitat.Name,
+                     animalSpecies = species.CommonName
+
+                 }).ToList();
+
+            // Filter the list for search results
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                var filteredAnimalInfo = AnimalInfo.Where(item => item.animal == searchString);
+                return View(filteredAnimalInfo);
+            }
+
+            // Pass that information to the view
             return View(AnimalInfo);
         }
 
