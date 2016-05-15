@@ -1,0 +1,44 @@
+@model IEnumerable<ZoolandiaMVC.Models.AnimalData>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.animalHabitatName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.animalSpecies)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.animal)
+        </th>
+        <th></th>
+    </tr>
+    
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.animalHabitatName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.animalSpecies)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.animal)
+        </td>
+        <td>
+            @*<a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+            <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+            <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>*@
+        </td>
+    </tr>
+}
+</table>
