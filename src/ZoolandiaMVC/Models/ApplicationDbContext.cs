@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
 using ZoolandiaMVC.Models;
+using ZoolandiaMVC.ViewModels;
 
 namespace ZoolandiaMVC.Models
 {
@@ -21,5 +22,6 @@ namespace ZoolandiaMVC.Models
         public DbSet<Habitat> Habitat { get; set; }
         public DbSet<HabitatType> HabitatType { get; set; }
         public DbSet<Species> Species { get; set; }
+        public DbSet<AnimalDataViewModel> AnimalDataViewModel { get; set; }
     }
 }

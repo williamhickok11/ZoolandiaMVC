@@ -11,5 +11,7 @@ namespace ZoolandiaMVC.ViewModels
         public string animal { get; set; }
         public string animalHabitatName { get; set; }
         public string animalSpecies { get; set; }
+        public int habitatId { get; set; }
+        public int speciesId { get; set; }
     }
 }

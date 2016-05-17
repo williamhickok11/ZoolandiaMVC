@@ -5,6 +5,7 @@ using Microsoft.Data.Entity;
 using ZoolandiaMVC.Models;
 using ZoolandiaMVC.ViewModels;
 using System;
+using System.Collections.Generic;
 
 namespace ZoolandiaMVC.Controllers
 {
@@ -77,7 +78,35 @@ namespace ZoolandiaMVC.Controllers
         // GET: Animals/Create
         public IActionResult Create()
         {
-            return View();
+            var AnimalFullInfo =
+                (from animal in _context.Animal
+                 join habitat in _context.Habitat
+                 on animal.IdHabitat equals habitat.ID
+
+                 join species in _context.Species
+                 on animal.IdSpecies equals species.ID
+
+                 //basically means 'create new' based on search results
+                 select new AnimalDataViewModel
+                 {
+                     ID = animal.ID,
+                     animal = animal.Name,
+                     animalHabitatName = habitat.Name,
+                     animalSpecies = species.CommonName,
+                     habitatId = habitat.ID,
+                     speciesId = species.ID
+
+                 }).ToList();
+
+            var habitatNameList = new List<string>();
+            foreach (var item in AnimalFullInfo)
+            {
+                habitatNameList.Add(item.animalHabitatName);
+            }
+            ViewData["habitatList"] = new SelectList(habitatNameList);
+
+            // Pass that information to the view
+            return View(AnimalFullInfo);
         }
 
         // POST: Animals/Create
