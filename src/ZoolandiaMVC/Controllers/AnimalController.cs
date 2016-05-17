@@ -6,6 +6,9 @@ using ZoolandiaMVC.Models;
 using ZoolandiaMVC.ViewModels;
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNet.Http;
+using System.IO;
+using Microsoft.Net.Http.Headers;
 
 namespace ZoolandiaMVC.Controllers
 {
@@ -66,14 +69,77 @@ namespace ZoolandiaMVC.Controllers
                 return HttpNotFound();
             }
 
+            // Get the specifice animal
             Animal animal = _context.Animal.Single(m => m.ID == id);
-            if (animal == null)
-            {
-                return HttpNotFound();
-            }
 
-            return View(animal);
+            // Get Document table from the database
+           
+            var docs = (from d in _context.Document
+                        orderby d.FileName
+                        select new Document
+                        {}).ToList();
+
+            DocumentDetailsViewModel vm = new DocumentDetailsViewModel()
+            {
+                Documents = docs,
+                ID = animal.ID,
+                IdHabitat = animal.IdHabitat,
+                IdSpecies = animal.IdSpecies,
+                Name = animal.Name
+            };
+            return View(vm);
         }
+
+        [HttpPost]
+        public IActionResult Details(IFormFile file, DocumentDetailsViewModel docViewModel)
+        {
+            using (var dbContext = new ApplicationDbContext())
+            {
+                if (file != null && file.Length > 0)
+                    try
+                    {
+                        var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                        using (var reader = new StreamReader(file.OpenReadStream()))
+                        {
+                            string contentAsString = reader.ReadToEnd();
+                            byte[] bytes = new byte[contentAsString.Length * sizeof(char)];
+                            System.Buffer.BlockCopy(contentAsString.ToCharArray(), 0, bytes, 0, bytes.Length);
+                            var fileType = file.ContentType;
+                            Document doc = new Document()
+                            {
+                                Title = docViewModel.Title,
+                                FileName = fileName,
+                                Contents = bytes,
+                                ContentType = fileType,
+                                UploadDate = DateTime.Now,
+                                UploadUserId = "williamhickok11@gmail.c0m"
+                            };
+
+                            dbContext.Document.Add(doc);
+                            dbContext.SaveChanges();
+                        }
+
+                        ViewBag.Message = "File uploaded successfully";
+
+                    }
+                    catch (Exception ex)
+                    {
+                        ViewBag.Message = "ERROR:" + ex.Message.ToString();
+                    }
+
+                ////go back to index and the new doc should show
+                //var docs = from d in dbContext.Document
+                //           orderby d.FileName
+                //           select d;
+
+                DocumentDetailsViewModel vm = new DocumentDetailsViewModel()
+                {
+                    //Documents = docs.ToList()
+                };
+                return View(vm);
+            }
+        }
+
 
         // GET: Animals/Create
         public IActionResult Create()

@@ -1,4 +1,4 @@
-@model ZoolandiaMVC.Models.Animal
+@model ZoolandiaMVC.ViewModels.DocumentDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -29,6 +29,20 @@
             @Html.DisplayFor(model => model.Name)
         </dd>
     </dl>
+
+    @using (Html.BeginForm("Details", "Animal", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <label for="file">File Upload:</label>
+        <br />
+        @Html.Label("File Name:   ")@Html.TextBoxFor(model => model.Title)
+
+        
+        <input type="file" name="file" id="file" />
+        <br>
+        <input type="submit" value="Upload File" />
+        <br>
+    }
+
 </div>
 <p>
     <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |

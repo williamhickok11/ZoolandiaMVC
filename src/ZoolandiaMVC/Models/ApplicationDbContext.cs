@@ -23,5 +23,6 @@ namespace ZoolandiaMVC.Models
         public DbSet<HabitatType> HabitatType { get; set; }
         public DbSet<Species> Species { get; set; }
         public DbSet<AnimalDataViewModel> AnimalDataViewModel { get; set; }
+        public DbSet<Document> Document { get; set; }
     }
 }
